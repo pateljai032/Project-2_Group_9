@@ -9,19 +9,27 @@ from tkinter import messagebox
 
 class Recommender:
     def __init__(self):
+        """
+        Initializes the variables
+        """
         self.books = {}
         self.shows = {}
         self.associations = {}
 
     def loadBooks(self):
+        """
+        Loads all book information based on the file the user selects
+        :return: None
+        """
         root = tk.Tk()
         root.withdraw()
 
         while True:
             file_path = filedialog.askopenfilename(title="Select a book file",
-                                                   filetypes=[("CSV files", "*.csv"), ("All files", "*.*")])
+                                                   filetypes=[("CSV files", "*.csv"), (
+                                                   "All files", "*.*")])  # Opens the directory to choose file
             if file_path:
-                try:
+                try:  # Try and Except statements to make sure the book obj is properly initialized
                     with open(file_path, newline='', encoding='utf-8') as csvfile:
                         reader = csv.DictReader(csvfile)
                         for row in reader:
@@ -40,7 +48,7 @@ class Recommender:
                             )
                             self.books[book.get_ID()] = book
                     break
-                except FileNotFoundError:
+                except FileNotFoundError:  # Different error exceptions for the try statement
                     print("File not found. Please try again.")
                 except KeyError as e:
                     print(f"Missing expected column: {e}. Please try again.")
@@ -54,14 +62,18 @@ class Recommender:
         root.destroy()
 
     def loadShows(self):
+        """
+        Loads all show information based on the file the user selects
+        :return: None
+        """
         root = tk.Tk()
-        root.withdraw()
+        root.withdraw()  # Hide window
 
         while True:
-            file_path = filedialog.askopenfilename(title="Select a show file",
+            file_path = filedialog.askopenfilename(title="Select a show file",  # Opens file directory to choose file
                                                    filetypes=[("CSV files", "*.csv"), ("All files", "*.*")])
             if file_path:
-                try:
+                try:  # Try and Except statements to make sure the show obj is initialized properly
                     with open(file_path, newline='', encoding='utf-8') as csvfile:
                         reader = csv.DictReader(csvfile)
                         for row in reader:
@@ -82,7 +94,7 @@ class Recommender:
                             )
                             self.shows[show.get_ID()] = show
                     break
-                except FileNotFoundError:
+                except FileNotFoundError:  # Exception errors for the try statement
                     print("File not found. Please try again.")
                 except KeyError as e:
                     print(f"Missing expected column: {e}. Please try again.")
@@ -96,6 +108,10 @@ class Recommender:
         root.destroy()
 
     def loadAssociations(self):
+        """
+        Loads all association information based on the file the user selects for the recommendations
+        :return: None
+        """
         root = tk.Tk()
         root.withdraw()  # Hide the root window
 
@@ -137,6 +153,10 @@ class Recommender:
     # Additional methods will be implemented based on further instructions
 
     def getMovieList(self):
+        """
+        Formats how the movie list is created using the length of the strings
+        :return: Result, formatted string containing the Headers and list of movies
+        """
         movies = [(show.get_title(), show.get_duration())
                   for show in self.shows.values()
                   if show.get_type_of_show() == 'Movie']
@@ -157,6 +177,10 @@ class Recommender:
         return "\n".join(result)
 
     def getTVList(self):
+        """
+        Formats the list of TV shows using the length of the strings
+        :return: Result, formatted string containing the headers and the list of movies
+        """
         # Filter TV shows
         tv_shows = [(show.get_title(), show.get_duration())
                     for show in self.shows.values()
@@ -178,6 +202,10 @@ class Recommender:
         return "\n".join(result)
 
     def getBookList(self):
+        """
+        Formats the list of books using the width of the strings
+        :return: Result, formatted string containing the headers and the list of all the books
+        """
         # Prepare book data
         books = [(book.get_title(), book.get_authors()) for book in self.books.values()]
 
@@ -197,14 +225,19 @@ class Recommender:
         return "\n".join(result)
 
     def getMovieStats(self):
-        movie_ratings = Counter()
+        """
+        This function updates the information about movies using the variables and uses it for the stats.
+        :return: stats, formatted string which contains all the trends/stats of the movie list
+        """
+        # Creates counters to keep track of each different variable
+        movie_ratings = Counter()  # ratings counter
         total_duration = 0
-        director_counter = Counter()
-        actor_counter = Counter()
-        genre_counter = Counter()
+        director_counter = Counter()  # Director Counter
+        actor_counter = Counter()  # Actor Counter
+        genre_counter = Counter()  # Genre Counter
 
         movie_count = 0
-        for show in self.shows.values():
+        for show in self.shows.values():  # Determines if the entry is a movie and updates the counters for each variable if it is
             if show.get_type_of_show() == 'Movie':
                 movie_count += 1
                 movie_ratings[show.get_rating()] += 1
@@ -221,41 +254,42 @@ class Recommender:
         if movie_count == 0:
             return "No movies found."
 
-        rating_percentage = "\n"
-        for rating, count in movie_ratings.items():
-            if rating != "":
+        rating_percentage = "\n"  # Start on new line
+        for rating, count in movie_ratings.items():  # Using dictionary to output the tuples
+            if rating != "":  # If there is no rating, makes it None on the output
                 rating_percentage += (rating + ": " + f"{count / movie_count * 100:.2f}%" + "\n")
             else:
                 rating_percentage += ("None: " + f"{count / movie_count * 100:.2f}%" + "\n")
 
-        average_duration = total_duration / movie_count
+        average_duration = total_duration / movie_count  # Determining the overall trends
         most_directed = director_counter.most_common(1)
         most_directed_name = most_directed[0][0] if most_directed else "N/A"
         most_acted = actor_counter.most_common(1)
         most_acted_name = most_acted[0][0] if most_acted else "N/A"
         most_genres = genre_counter.most_common(1)
 
-        
-        
-        stats = {
+        stats = {  # Variable containing all the formatted information about movies
             "Rating Percentages": rating_percentage,
             "Average Duration (minutes)": f"{average_duration:.2f}",
-            "Most Movie/Show Directed By": most_directed_name, #most_directed[0][0] if most_directed else "N/A",
-            "Most Prolific Actor ": most_acted_name, #most_acted[0][0] if most_acted else "N/A",
+            "Most Movie/Show Directed By": most_directed_name,  # most_directed[0][0] if most_directed else "N/A",
+            "Most Prolific Actor ": most_acted_name,  # most_acted[0][0] if most_acted else "N/A",
             "Most Frequent Genre": most_genres[0][0] if most_genres else "N/A"
         }
 
         return stats
 
-
     def getTVStats(self):
-        tv_ratings = Counter()
+        """
+        This function updates the information about TV shows using the variables and uses it for the stats.
+        :return: stats, formatted string which contains all the trends/stats of the show list
+        """
+        tv_ratings = Counter()  # Making counters for each variable
         total_seasons = 0
         actor_counter = Counter()
         genre_counter = Counter()
 
         tv_show_count = 0
-        for show in self.shows.values():
+        for show in self.shows.values():  # Determines if the show is a show and updates the information/counters if it is
             if show.get_type_of_show() == 'TV Show':
                 tv_show_count += 1
                 tv_ratings[show.get_rating()] += 1
@@ -267,20 +301,24 @@ class Recommender:
                 actor_counter.update(show.get_cast().split(", "))
                 genre_counter.update(show.get_listed_in().split(", "))
 
+        print(actor_counter)
+        actor_counter.pop("")
+        print(actor_counter)
+
         if tv_show_count == 0:
             return "No TV shows found."
 
-        rating_percentage = "\n"                                        #Start on fresh line
-        for rating, count in tv_ratings.items():                        #Iterate through dictionary to build string
-            if rating != "":                                                                             #Check for Non Rated
+        rating_percentage = "\n"  # Start on fresh line
+        for rating, count in tv_ratings.items():  # Iterate through dictionary to build string
+            if rating != "":  # Check for Non Rated shows
                 rating_percentage += (rating + ": " + f"{count / tv_show_count * 100:.2f}%" + "\n")
-            else:                                                                                        #
+            else:
                 rating_percentage += ("TV-NR: " + f"{count / tv_show_count * 100:.2f}%" + "\n")
         average_seasons = total_seasons / tv_show_count
-        most_acted = actor_counter.most_common(1)
-        most_genres = genre_counter.most_common(1)
+        most_acted = actor_counter.most_common(0)
+        most_genres = genre_counter.most_common(0)
 
-        stats = {
+        stats = {  # returned output with all formatted information about shows
             "Rating": rating_percentage,
             "\nAverage Number of Seasons": f"{average_seasons:.2f}",
             "\nMost Acted By": most_acted[0][0] if most_acted else "N/A",
@@ -290,11 +328,15 @@ class Recommender:
         return stats
 
     def getBookStats(self):
-        total_pages = 0
+        """
+        This function updates the information about books using the variables and uses it for the stats.
+        :return: stats, formatted string which contains all the trends/stats of the book list
+        """
+        total_pages = 0  # Initializes book variables
         author_counter = Counter()
         publisher_counter = Counter()
 
-        book_count = len(self.books)
+        book_count = len(self.books)  # Updates the variables with the information from the books
         for book in self.books.values():
             total_pages += book.get_num_pages()
             author_counter.update(book.get_authors().split(", "))
@@ -303,19 +345,23 @@ class Recommender:
         if book_count == 0:
             return "No books found."
 
-        average_page_count = total_pages / book_count
+        average_page_count = total_pages / book_count  # Determines the trends
         most_written = author_counter.most_common(1)
         most_published = publisher_counter.most_common(1)
 
-        stats = {
+        stats = {  # Formatted output with all of the book information
             "Average Page Count ": f" {average_page_count:.2f} Pages",
-            "\nMost Books Written By ":  most_written[0][0] if most_written else "N/A",
-            "\nMost Books Published By ":  most_published[0][0] if most_published else "N/A"
+            "\nMost Books Written By ": most_written[0][0] if most_written else "N/A",
+            "\nMost Books Published By ": most_published[0][0] if most_published else "N/A"
         }
 
         return stats
 
     def searchTVMovies(self, media_type, title, director, actor, genre):
+        """
+        Uses the User's input for either movies or shows to search within the data
+        :return: result, formatted string which contains all of the data relating to what the user searched
+        """
         # Validate media type
         if media_type not in ['Movie', 'TV Show']:
             messagebox.showerror("Error", "Please select 'Movie' or 'TV Show' from Type first.")
@@ -359,6 +405,13 @@ class Recommender:
         return "\n".join(result)
 
     def searchBooks(self, title, author, publisher):
+        """
+        Searches the data using what the user inputs to find any related books
+        :param title: User input title
+        :param author: Author
+        :param publisher:  User input publisher
+        :return: results, formatted string containing all of the information on relevant books
+        """
         # Validate search criteria
         if not any([title, author, publisher]):
             messagebox.showerror("Error", "Please enter information for the Title, Author, and/or Publisher first.")
@@ -392,6 +445,12 @@ class Recommender:
         return "\n".join(result)
 
     def getRecommendations(self, type_, title):
+        """
+        Uses associations to determine the recommendations that will be shown to the user based on their input
+        :param type_: User input type of media
+        :param title: User input title
+        :return: result, formatted string containing all of the recommendations determined through the associations
+        """
         recommendations = []
         if type_ in ['Movie', 'TV Show']:
             for show_id, show in self.shows.items():
@@ -427,41 +486,45 @@ class Recommender:
 
         max_title_length = max(len("Title"), max(len(rec.get_title()) for rec in recommendations))
         if recommendations and any(hasattr(rec, 'get_director') for rec in recommendations):
-            max_director_length = max(len("Director"), max(len(rec.get_director()) for rec in recommendations if hasattr(rec, 'get_director')))
+            max_director_length = max(len("Director"), max(
+                len(rec.get_director()) for rec in recommendations if hasattr(rec, 'get_director')))
         else:
-            max_director_length = len("Director")  # Default to the length of the string "Director" if no valid director data
+            max_director_length = len(
+                "Director")  # Default to the length of the string "Director" if no valid director data
 
-        #max_director_length = max(len("Director"), max(len(rec.get_director()) for rec in recommendations if hasattr(rec, 'get_director')))
+        # max_director_length = max(len("Director"), max(len(rec.get_director()) for rec in recommendations if hasattr(rec, 'get_director')))
 
         if recommendations and any(hasattr(rec, 'get_cast') for rec in recommendations):
-            max_actor_length = max(len("Actors"), max(len(rec.get_cast()) for rec in recommendations if hasattr(rec, 'get_cast')))
+            max_actor_length = max(len("Actors"),
+                                   max(len(rec.get_cast()) for rec in recommendations if hasattr(rec, 'get_cast')))
         else:
             max_actor_length = len("Actors")
 
-        #max_actor_length = max(len("Actors"),max(len(rec.get_cast()) for rec in recommendations if hasattr(rec, 'get_cast')))
+        # max_actor_length = max(len("Actors"),max(len(rec.get_cast()) for rec in recommendations if hasattr(rec, 'get_cast')))
 
         if recommendations and any(hasattr(rec, 'get_listed_in') for rec in recommendations):
-            max_genre_length = max(len("Genre"), max(len(rec.get_listed_in()) for rec in recommendations if hasattr(rec, 'get_listed_in')))
+            max_genre_length = max(len("Genre"), max(
+                len(rec.get_listed_in()) for rec in recommendations if hasattr(rec, 'get_listed_in')))
         else:
             max_genre_length = len("Genre")
 
-
-        #max_genre_length = max(len("Genre"), max(len(rec.get_listed_in()) for rec in recommendations if hasattr(rec, 'get_listed_in')))
+        # max_genre_length = max(len("Genre"), max(len(rec.get_listed_in()) for rec in recommendations if hasattr(rec, 'get_listed_in')))
 
         if recommendations and any(hasattr(rec, 'get_authors') for rec in recommendations):
-            max_author_length = max(len("Author"), max(len(rec.get_authors()) for rec in recommendations if hasattr(rec, 'get_authors')))
+            max_author_length = max(len("Author"), max(
+                len(rec.get_authors()) for rec in recommendations if hasattr(rec, 'get_authors')))
         else:
             max_author_length = len("Author")
 
-
-        #max_author_length = max(len("Author"),max(len(rec.get_authors()) for rec in recommendations if hasattr(rec, 'get_authors')))
+        # max_author_length = max(len("Author"),max(len(rec.get_authors()) for rec in recommendations if hasattr(rec, 'get_authors')))
 
         if recommendations and any(hasattr(rec, 'get_publisher') for rec in recommendations):
-            max_publisher_length = max(len("Publisher"), max(len(rec.get_publisher()) for rec in recommendations if hasattr(rec, 'get_publisher')))
+            max_publisher_length = max(len("Publisher"), max(
+                len(rec.get_publisher()) for rec in recommendations if hasattr(rec, 'get_publisher')))
         else:
             max_publisher_length = len("Publisher")
 
-        #max_publisher_length = max(len("Publisher"), max(len(rec.get_publisher()) for rec in recommendations if hasattr(rec, 'get_publisher')))
+        # max_publisher_length = max(len("Publisher"), max(len(rec.get_publisher()) for rec in recommendations if hasattr(rec, 'get_publisher')))
 
         header = f"{'Title'.ljust(max_title_length)}  {'Director'.ljust(max_director_length)}  {'Actors'.ljust(max_actor_length)}  {'Genre'.ljust(max_genre_length)}  {'Author'.ljust(max_author_length)}  {'Publisher'.ljust(max_publisher_length)}"
         rows = []
@@ -483,8 +546,7 @@ class Recommender:
 
         result = [header] + rows
         return "\n".join(result)
-    
-    
+
     # def get_movie_ratings(self):
     #     """Calculate the percentage of each rating category for movies."""
     #     ratings = {}
