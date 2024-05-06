@@ -26,6 +26,6 @@ The system consists of several Python files each handling a specific part of the
 ## Setup and Installation
 1. Clone the repository:
    ```bash
-   git clone <repository_url>
+   git clone https://github.com/pateljai032/Project-2_Group_9.git
 
 
