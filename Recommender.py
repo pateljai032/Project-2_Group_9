@@ -251,6 +251,8 @@ class Recommender:
                 actor_counter.update(show.get_cast().split(", "))
                 genre_counter.update(show.get_listed_in().split(", "))
 
+
+
         if movie_count == 0:
             return "No movies found."
 
@@ -262,17 +264,22 @@ class Recommender:
                 rating_percentage += ("None: " + f"{count / movie_count * 100:.2f}%" + "\n")
 
         average_duration = total_duration / movie_count  # Determining the overall trends
-        most_directed = director_counter.most_common(1)
-        most_directed_name = most_directed[0][0] if most_directed else "N/A"
-        most_acted = actor_counter.most_common(1)
-        most_acted_name = most_acted[0][0] if most_acted else "N/A"
-        most_genres = genre_counter.most_common(1)
+        most_directed = director_counter.most_common()
+        #most_directed_name = most_directed[0][0] if most_directed else "N/A"
+        most_acted = actor_counter.most_common()
+        #most_acted_name = most_acted[0][0] if most_acted else "N/A"
+        most_genres = genre_counter.most_common()
+
+        #print(most_directed)
+        most_directed.pop(0)
+        #print(most_acted)
+        most_acted.pop(0)
 
         stats = {  # Variable containing all the formatted information about movies
             "Rating Percentages": rating_percentage,
             "Average Duration (minutes)": f"{average_duration:.2f}",
-            "Most Movie/Show Directed By": most_directed_name,  # most_directed[0][0] if most_directed else "N/A",
-            "Most Prolific Actor ": most_acted_name,  # most_acted[0][0] if most_acted else "N/A",
+            "Most Movie/Show Directed By": most_directed[0][0],  # most_directed[0][0] if most_directed else "N/A",
+            "Most Prolific Actor ": most_acted[0][0],  # most_acted[0][0] if most_acted else "N/A",
             "Most Frequent Genre": most_genres[0][0] if most_genres else "N/A"
         }
 
@@ -301,9 +308,9 @@ class Recommender:
                 actor_counter.update(show.get_cast().split(", "))
                 genre_counter.update(show.get_listed_in().split(", "))
 
-        print(actor_counter)
         actor_counter.pop("")
-        print(actor_counter)
+        actor_counter.pop('1')
+        # print(genre_counter) testing
 
         if tv_show_count == 0:
             return "No TV shows found."
@@ -315,14 +322,14 @@ class Recommender:
             else:
                 rating_percentage += ("TV-NR: " + f"{count / tv_show_count * 100:.2f}%" + "\n")
         average_seasons = total_seasons / tv_show_count
-        most_acted = actor_counter.most_common(0)
-        most_genres = genre_counter.most_common(0)
+        most_acted = actor_counter.most_common()
+        most_genres = genre_counter.most_common()#
 
         stats = {  # returned output with all formatted information about shows
             "Rating": rating_percentage,
             "\nAverage Number of Seasons": f"{average_seasons:.2f}",
-            "\nMost Acted By": most_acted[0][0] if most_acted else "N/A",
-            "\nMost Common Genre": most_genres[0][0] if most_genres else "N/A"
+            "\nMost Acted By": most_acted[0][0],
+            "\nMost Common Genre": most_genres[0][0]
         }
 
         return stats
