@@ -14,7 +14,7 @@ The system consists of several Python files each handling a specific part of the
 - RecommenderGUI.py: GUI layer for interacting with the recommender system, implemented using tkinter.
 - `associated*.csv`: Datasets linking media content with associated metadata in varying sizes (10, 100, 1000).
 - `books*.csv`: Datasets containing book information in varying sizes (10, 100, 1000).
-- `shows*.csv`: Datasets containing TV show information in varying sizes (10, 100, 1000).
+- `shows*.csv`: Datasets containing TV show/Movies information in varying sizes (10, 100, 1000).
 
 ## Features
 - Data Loading: Dynamic loading of books, shows, and associations data through a GUI.
