@@ -221,10 +221,13 @@ class Recommender:
         if movie_count == 0:
             return "No movies found."
 
-        rating_percentage = {
-            rating: f"{count / movie_count * 100:.2f}%"
-            for rating, count in movie_ratings.items()
-        }
+        rating_percentage = "\n"
+        for rating, count in movie_ratings.items():
+            if rating != "":
+                rating_percentage += (rating + ": " + f"{count / movie_count * 100:.2f}%" + "\n")
+            else:
+                rating_percentage += ("None: " + f"{count / movie_count * 100:.2f}%" + "\n")
+
         average_duration = total_duration / movie_count
         most_directed = director_counter.most_common(1)
         most_directed_name = most_directed[0][0] if most_directed else "N/A"
@@ -267,10 +270,12 @@ class Recommender:
         if tv_show_count == 0:
             return "No TV shows found."
 
-        rating_percentage = {
-            rating: f"{count / tv_show_count * 100:.2f}%"
-            for rating, count in tv_ratings.items()
-        }
+        rating_percentage = "\n"                                        #Start on fresh line
+        for rating, count in tv_ratings.items():                        #Iterate through dictionary to build string
+            if rating != "":                                                                             #Check for Non Rated
+                rating_percentage += (rating + ": " + f"{count / tv_show_count * 100:.2f}%" + "\n")
+            else:                                                                                        #
+                rating_percentage += ("TV-NR: " + f"{count / tv_show_count * 100:.2f}%" + "\n")
         average_seasons = total_seasons / tv_show_count
         most_acted = actor_counter.most_common(1)
         most_genres = genre_counter.most_common(1)
