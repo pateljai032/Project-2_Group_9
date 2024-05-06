@@ -3,7 +3,7 @@
 # Media Recommender System
 
 ## Overview
-This repository contains a sophisticated Media Recommender System developed as part of a computer science project. It includes classes for managing media entities such as books and shows, and functionalities for loading data, generating recommendations, and displaying statistics.
+This repository contains a Media Recommender System developed as part of a Engineering Python project. It includes classes for managing media entities such as books and shows, and functionalities for loading data, generating recommendations, and displaying statistics.
 
 ## System Components
 The system consists of several Python files each handling a specific part of the recommendation process:
