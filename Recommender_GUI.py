@@ -1,9 +1,10 @@
 #RecommenderGUI
-
 import tkinter as tk
 from tkinter import ttk
 from tkinter import scrolledtext
 from tkinter import messagebox
+# import matplotlib.pyplot as plt # type: ignore
+# from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg # type: ignore
 from Recommender import Recommender
 from Show import Show
 from Media import Media
@@ -30,6 +31,7 @@ class RecommenderGUI:
         self.setup_search_tv_movies_tab()
         self.setup_search_books_tab()
         self.setup_recommendations_tab()
+        # self.setup_ratings_tab()
         self.setup_buttons()
         # self.loadShows()
         # self.loadBooks()
@@ -192,8 +194,40 @@ class RecommenderGUI:
         ttk.Button(tab, text="Get Recommendations", command=self.get_recommendations).pack(pady=20)
 
         # Text area for displaying results
-        self.recommendation_results = scrolledtext.ScrolledText(tab, width=100, height=20, state='disabled')
+        self.recommendation_results = scrolledtext.ScrolledText(tab, width=100, height=25, state='disabled')
         self.recommendation_results.pack(padx=10, pady=10)
+        
+
+    # def setup_ratings_tab(self):
+    #     # Create a tab for Ratings
+    #     ratings_tab = ttk.Frame(self.notebook)
+    #     self.notebook.add(ratings_tab, text="Ratings")
+
+    #     # Assuming get_movie_ratings and get_tv_ratings are methods that return dictionaries
+    #     # with ratings percentages like {'G': 10.00, 'PG': 15.00, 'R': 25.00}
+    #     movie_ratings = self.recommender.get_movie_ratings() if hasattr(self.recommender, 'get_movie_ratings') else {}
+    #     tv_ratings = self.recommender.get_tv_ratings() if hasattr(self.recommender, 'get_tv_ratings') else {}
+
+    #     # Create pie charts for movies and TV shows
+    #     self.create_pie_chart(ratings_tab, movie_ratings, "Movie Ratings", 0)
+    #     self.create_pie_chart(ratings_tab, tv_ratings, "TV Show Ratings", 1)
+
+    # def create_pie_chart(self, tab, data, title, column):
+    #     fig, ax = plt.subplots()
+    #     labels = list(data.keys())
+    #     sizes = list(data.values())
+    #     # Create pie chart with labels and display percentages with 2 decimal places
+    #     ax.pie(sizes, labels=labels, autopct='%1.2f%%', startangle=90)
+    #     ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+    #     plt.title(title)
+
+    #     # Embedding the plot in the Tkinter widget
+    #     canvas = FigureCanvasTkAgg(fig, master=tab)
+    #     canvas.draw()
+    #     canvas.get_tk_widget().grid(row=0, column=column, sticky='nsew')
+
+    #     # Ensure the column expands to fill available space
+    #     tab.grid_columnconfigure(column, weight=1)
 
 
     def get_recommendations(self):
@@ -216,7 +250,7 @@ class RecommenderGUI:
 
         tk.Button(frame, text="Load Shows", command=self.loadShows).pack(side='left',padx=30,pady=10)
         tk.Button(frame, text="Load Books", command=self.loadBooks).pack(side='left',padx=130,pady=10)
-        tk.Button(frame, text="Load Associations", command=self.loadAssociations).pack(side='left',padx=130,pady=10)
+        tk.Button(frame, text="Load Recommendations", command=self.loadAssociations).pack(side='left',padx=130,pady=10)
         tk.Button(frame, text="Information", command=self.creditInfoBox).pack(side='left',padx=130,pady=10)
         tk.Button(frame, text="Quit", command=self.root.quit).pack(side='right',padx=30,pady=10)
 

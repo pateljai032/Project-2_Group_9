@@ -232,6 +232,8 @@ class Recommender:
         most_acted_name = most_acted[0][0] if most_acted else "N/A"
         most_genres = genre_counter.most_common(1)
 
+        
+        
         stats = {
             "Rating Percentages": rating_percentage,
             "Average Duration (minutes)": f"{average_duration:.2f}",
@@ -241,6 +243,7 @@ class Recommender:
         }
 
         return stats
+
 
     def getTVStats(self):
         tv_ratings = Counter()
@@ -418,16 +421,42 @@ class Recommender:
             return "No results"
 
         max_title_length = max(len("Title"), max(len(rec.get_title()) for rec in recommendations))
-        max_director_length = max(len("Director"), max(
-            len(rec.get_director()) for rec in recommendations if hasattr(rec, 'get_director')))
-        max_actor_length = max(len("Actors"),
-                               max(len(rec.get_cast()) for rec in recommendations if hasattr(rec, 'get_cast')))
-        max_genre_length = max(len("Genre"), max(
-            len(rec.get_listed_in()) for rec in recommendations if hasattr(rec, 'get_listed_in')))
-        max_author_length = max(len("Author"),
-                                max(len(rec.get_authors()) for rec in recommendations if hasattr(rec, 'get_authors')))
-        max_publisher_length = max(len("Publisher"), max(
-            len(rec.get_publisher()) for rec in recommendations if hasattr(rec, 'get_publisher')))
+        if recommendations and any(hasattr(rec, 'get_director') for rec in recommendations):
+            max_director_length = max(len("Director"), max(len(rec.get_director()) for rec in recommendations if hasattr(rec, 'get_director')))
+        else:
+            max_director_length = len("Director")  # Default to the length of the string "Director" if no valid director data
+
+        #max_director_length = max(len("Director"), max(len(rec.get_director()) for rec in recommendations if hasattr(rec, 'get_director')))
+
+        if recommendations and any(hasattr(rec, 'get_cast') for rec in recommendations):
+            max_actor_length = max(len("Actors"), max(len(rec.get_cast()) for rec in recommendations if hasattr(rec, 'get_cast')))
+        else:
+            max_actor_length = len("Actors")
+
+        #max_actor_length = max(len("Actors"),max(len(rec.get_cast()) for rec in recommendations if hasattr(rec, 'get_cast')))
+
+        if recommendations and any(hasattr(rec, 'get_listed_in') for rec in recommendations):
+            max_genre_length = max(len("Genre"), max(len(rec.get_listed_in()) for rec in recommendations if hasattr(rec, 'get_listed_in')))
+        else:
+            max_genre_length = len("Genre")
+
+
+        #max_genre_length = max(len("Genre"), max(len(rec.get_listed_in()) for rec in recommendations if hasattr(rec, 'get_listed_in')))
+
+        if recommendations and any(hasattr(rec, 'get_authors') for rec in recommendations):
+            max_author_length = max(len("Author"), max(len(rec.get_authors()) for rec in recommendations if hasattr(rec, 'get_authors')))
+        else:
+            max_author_length = len("Author")
+
+
+        #max_author_length = max(len("Author"),max(len(rec.get_authors()) for rec in recommendations if hasattr(rec, 'get_authors')))
+
+        if recommendations and any(hasattr(rec, 'get_publisher') for rec in recommendations):
+            max_publisher_length = max(len("Publisher"), max(len(rec.get_publisher()) for rec in recommendations if hasattr(rec, 'get_publisher')))
+        else:
+            max_publisher_length = len("Publisher")
+
+        #max_publisher_length = max(len("Publisher"), max(len(rec.get_publisher()) for rec in recommendations if hasattr(rec, 'get_publisher')))
 
         header = f"{'Title'.ljust(max_title_length)}  {'Director'.ljust(max_director_length)}  {'Actors'.ljust(max_actor_length)}  {'Genre'.ljust(max_genre_length)}  {'Author'.ljust(max_author_length)}  {'Publisher'.ljust(max_publisher_length)}"
         rows = []
@@ -449,3 +478,32 @@ class Recommender:
 
         result = [header] + rows
         return "\n".join(result)
+    
+    
+    # def get_movie_ratings(self):
+    #     """Calculate the percentage of each rating category for movies."""
+    #     ratings = {}
+    #     total_count = 0
+    #     for movie in self.shows['movies']:
+    #         ratings[movie['rating']] = ratings.get(movie['rating'], 0) + 1
+    #         total_count += 1
+
+    #     # Convert counts to percentages
+    #     for rating in ratings:
+    #         ratings[rating] = (ratings[rating] / total_count) * 100
+
+    #     return ratings
+
+    # def get_tv_ratings(self):
+    #     """Calculate the percentage of each rating category for TV shows."""
+    #     ratings = {}
+    #     total_count = 0
+    #     for show in self.shows['tv_shows']:
+    #         ratings[show['rating']] = ratings.get(show['rating'], 0) + 1
+    #         total_count += 1
+
+    #     # Convert counts to percentages
+    #     for rating in ratings:
+    #         ratings[rating] = (ratings[rating] / total_count) * 100
+
+    #     return ratings
